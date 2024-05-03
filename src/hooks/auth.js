@@ -32,15 +32,21 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
   };
 
   const register = async ({ setErrors, ...props }) => {
-    await csrf();
-    setErrors([]);
-    axios
-      .post('/register', props)
-      .then(() => mutate())
-      .catch(error => {
-        if (error.response.status !== 422) throw error;
+    try {
+      await csrf();
+      setErrors([]);
+      await axios.post('/register', props);
+      mutate();
+    } catch (error) {
+      if (error.response && error.response.status !== 422) {
+        throw error;
+      } else if (error.response && error.response.status === 422) {
         setErrors(Object.values(error.response.data.errors).flat());
-      });
+      } else {
+        // Gérer d'autres types d'erreurs ici si nécessaire
+        console.error("Une erreur s'est produite lors de l'inscription:", error);
+      }
+    }
   };
 
   const login = async ({ setErrors, setStatus, ...props }) => {
