@@ -5,7 +5,7 @@ import TravelLandingView from 'src/sections/_travel/view/travel-landing-view';
 // ----------------------------------------------------------------------
 
 export default function HomePage() {
-  console.log(import.meta.env.VITE_AUTH_API_URL)
+  console.log(import.meta.env.VITE_BACKEND_URL)
   return (
     <>
       <Helmet>
