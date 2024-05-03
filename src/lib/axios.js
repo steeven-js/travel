@@ -1,7 +1,12 @@
-import axios from "axios";
+import Axios from 'axios'
 
-export default axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
-  withCredentials: true,
-  withXSRFToken: true
-});
+const axios = Axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+    },
+    withXSRFToken: true,
+    withCredentials: true,
+})
+
+export default axios
