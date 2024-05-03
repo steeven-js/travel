@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -15,7 +16,6 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { bgBlur } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
-// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { NavBasicDesktop } from 'src/components/nav-basic';
 
@@ -29,12 +29,27 @@ import SettingsButton from '../common/settings-button';
 
 export default function Header({ headerOnDark }) {
   const theme = useTheme();
-
   const offset = useOffSetTop();
-
   const mdUp = useResponsive('up', 'md');
+  const { logout, user } = useAuth();
 
-  const {logout} = useAuth();
+  const data = user
+    ? [
+        {
+          title: 'Home',
+          icon: <Iconify icon="solar:home-2-bold-duotone" />,
+          path: '/',
+        },
+      ]
+    : [
+        {
+          title: 'Home',
+          icon: <Iconify icon="solar:home-2-bold-duotone" />,
+          path: '/',
+        },
+        { title: 'Login', path: '/auth/login-background' },
+        { title: 'Register', path: '/auth/register-background' },
+      ];
 
   const renderContent = (
     <>
@@ -56,15 +71,7 @@ export default function Header({ headerOnDark }) {
                 '& .icon': { display: 'none' },
               },
             }}
-            data={[
-              {
-                title: 'Home',
-                icon: <Iconify icon="solar:home-2-bold-duotone" />,
-                path: '/',
-              },
-              { title: 'Login', path: '/auth/login-background' },
-              { title: 'Register', path: '/auth/register-background' },
-            ]}
+            data={data}
           />
         </Stack>
 
@@ -74,25 +81,26 @@ export default function Header({ headerOnDark }) {
       <Stack spacing={2} direction="row" alignItems="center" justifyContent="flex-end">
         <Stack spacing={1} direction="row" alignItems="center">
           <Searchbar />
-
           <SettingsButton />
         </Stack>
 
-        <Button
-          variant="contained"
-          color="inherit"
-          onClick={logout}
-          target="_blank"
-          rel="noopener"
-          sx={{
-            display: { xs: 'none', md: 'inline-flex' },
-          }}
-        >
-          Logout
-        </Button>
+        {user && (
+          <Button
+            variant="contained"
+            color="inherit"
+            onClick={logout}
+            target="_blank"
+            rel="noopener"
+            sx={{
+              display: { xs: 'none', md: 'inline-flex' },
+            }}
+          >
+            Logout
+          </Button>
+        )}
       </Stack>
 
-      {!mdUp &&
+      {!mdUp && (
         <NavMobile
           data={[
             {
@@ -105,7 +113,7 @@ export default function Header({ headerOnDark }) {
             { title: 'Logout', path: '/logout' },
           ]}
         />
-      }
+      )}
     </>
   );
 
