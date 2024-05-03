@@ -1,7 +1,7 @@
 import Axios from 'axios'
 
 const axios = Axios.create({
-  baseURL: 'https://breeze-api.jsprod.fr',
+  baseURL: import.meta.env.VITE_AUTH_API_URL,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
   },
