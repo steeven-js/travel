@@ -6,103 +6,101 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import axios from 'src/lib/axios';
 
-const API_USER = '/api/user';
-const API_REGISTER = '/register';
-const API_LOGIN = '/login';
-const API_FORGOT_PASSWORD = '/forgot-password';
-const API_RESET_PASSWORD = '/reset-password';
-const API_EMAIL_VERIFICATION = '/email/verification-notification';
-const API_LOGOUT = '/logout';
-
-const HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
-const HTTP_STATUS_CONFLICT = 409;
-
-const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
+export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { data: user, error, mutate } = useSWR(API_USER, () =>
-    axios.get(API_USER)
+  const { data: user, error, mutate } = useSWR('/api/user', () =>
+    axios
+      .get('/api/user')
       .then(res => res.data)
       .catch(error => {
-        if (error.response.status !== HTTP_STATUS_CONFLICT) throw error
-        mutate('/verify-email')
-      })
+        if (error.response.status !== 409) throw error;
+
+        mutate('/verify-email');
+      }),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
   );
 
   const csrf = async () => {
-    await axios.get('/sanctum/csrf-cookie');
-  }
-
-  const handleErrors = (error, setErrors) => {
-    if (error.response.status !== HTTP_STATUS_UNPROCESSABLE_ENTITY) throw error
-    setErrors(Object.values(error.response.data.errors).flat())
+    const response = await axios.get('/sanctum/csrf-cookie');
+    console.log('CSRF Token:', response.data.csrf_token);
+    return response;
   };
 
   const register = async ({ setErrors, ...props }) => {
     await csrf();
     setErrors([]);
-    try {
-      await axios.post(API_REGISTER, props);
-      mutate();
-    } catch (error) {
-      handleErrors(error, setErrors);
-    }
-  }
+    axios
+      .post('/register', props)
+      .then(() => mutate())
+      .catch(error => {
+        if (error.response.status !== 422) throw error;
+        setErrors(Object.values(error.response.data.errors).flat());
+      });
+  };
 
   const login = async ({ setErrors, setStatus, ...props }) => {
     await csrf();
     setErrors([]);
     setStatus(null);
-    try {
-      await axios.post(API_LOGIN, props);
-      mutate();
-    } catch (error) {
-      handleErrors(error, setErrors);
-    }
-  }
+    axios
+      .post('/login', props)
+      .then(() => mutate())
+      .catch(error => {
+        if (error.response.status !== 422) throw error;
+        setErrors(Object.values(error.response.data.errors).flat());
+      });
+  };
 
   const forgotPassword = async ({ setErrors, setStatus, email }) => {
     await csrf();
     setErrors([]);
     setStatus(null);
-    try {
-      const response = await axios.post(API_FORGOT_PASSWORD, { email });
-      setStatus(response.data.status);
-    } catch (error) {
-      handleErrors(error, setErrors);
-    }
-  }
+    axios
+      .post('/forgot-password', { email })
+      .then(response => setStatus(response.data.status))
+      .catch(error => {
+        if (error.response.status !== 422) throw error;
+        setErrors(Object.values(error.response.data.errors).flat());
+      });
+  };
 
   const resetPassword = async ({ setErrors, setStatus, ...props }) => {
     await csrf();
     setErrors([]);
     setStatus(null);
-    try {
-      const response = await axios.post(API_RESET_PASSWORD, { token: params.token, ...props });
-      navigate(`/login?reset=${btoa(response.data.status)}`);
-    } catch (error) {
-      handleErrors(error, setErrors);
-    }
-  }
+    axios
+      .post('/reset-password', { token: params.token, ...props })
+      .then(response => navigate(`/login?reset=${btoa(response.data.status)}`))
+      .catch(error => {
+        if (error.response.status !== 422) throw error;
+        setErrors(Object.values(error.response.data.errors).flat());
+      });
+  };
 
   const resendEmailVerification = ({ setStatus }) => {
-    axios.post(API_EMAIL_VERIFICATION)
+    axios
+      .post('/email/verification-notification')
       .then(response => setStatus(response.data.status));
-  }
+  };
 
   const logout = async () => {
     if (!error) {
-      await axios.post(API_LOGOUT);
+      await axios.post('/logout');
       mutate();
     }
     window.location.pathname = '/';
-  }
+  };
 
   useEffect(() => {
-    if (middleware === 'guest' && redirectIfAuthenticated && user) navigate(redirectIfAuthenticated);
+    if (middleware === 'guest' && redirectIfAuthenticated && user)
+      navigate(redirectIfAuthenticated);
     if (middleware === 'auth' && error) logout();
-  }, [user, error])
+  }, [user, error]);
 
   return {
     user,
@@ -111,8 +109,6 @@ const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     forgotPassword,
     resetPassword,
     resendEmailVerification,
-    logout
-  }
-}
-
-export default useAuth;
+    logout,
+  };
+};
