@@ -1,7 +1,7 @@
 import Axios from 'axios'
 
 const axios = Axios.create({
-  baseURL: import.meta.env.VITE_AUTH_API_URL,
+  baseURL: 'http://localhost:8000',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
   },
