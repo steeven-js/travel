@@ -58,19 +58,9 @@ export default function LoginBackgroundView() {
 
   const submitForm = handleSubmit(async (data) => {
     reset();
-    console.log('DATA', data)
+    // console.log('DATA', data)
     login({ email: data.email , password: data.password, setErrors, setStatus })
   });
-
-  // const onSubmit = handleSubmit(async (data) => {
-  //   try {
-  //     await new Promise((resolve) => setTimeout(resolve, 500));
-  //     reset();
-  //     console.log('DATA', data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // });
 
   const renderHead = (
     <div>

@@ -67,7 +67,7 @@ export default function RegisterBackgroundView() {
 
   const submitForm = handleSubmit(async (data) => {
     reset();
-    console.log('DATA', data)
+    // console.log('DATA', data)
     register({
       name: data.fullName,
       email: data.email,
@@ -77,16 +77,6 @@ export default function RegisterBackgroundView() {
       setStatus
     })
   });
-
-  // const onSubmit = handleSubmit(async (data) => {
-  //   try {
-  //     await new Promise((resolve) => setTimeout(resolve, 500));
-  //     reset();
-  //     console.log('DATA', data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // });
 
   const renderHead = (
     <div>
