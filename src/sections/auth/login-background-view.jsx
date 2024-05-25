@@ -1,38 +1,41 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { useAuth } from 'src/hooks/auth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
+import { auth } from "../../../firebase";
+
 // ----------------------------------------------------------------------
 
 export default function LoginBackgroundView() {
   const passwordShow = useBoolean();
-  const [errors, setErrors] = useState([])
-  const [status, setStatus] = useState(null)
+  const navigate = useNavigate();
+
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('That is not an email'),
-    password: Yup.string()
-      .required('Password is required')
-      .min(6, 'Password should be of minimum 6 characters length'),
+    email: Yup.string().required('Email is required').email('Invalid email format'),
+    password: Yup.string().required('Password is required').min(6, 'Password should be at least 6 characters'),
   });
 
   const defaultValues = {
@@ -51,15 +54,34 @@ export default function LoginBackgroundView() {
     formState: { isSubmitting },
   } = methods;
 
-  const { login } = useAuth({
-    middleware: 'guest',
-    redirectIfAuthenticated: '/'
-  })
+  const onSubmit = handleSubmit(async (data) => {
+    try {
 
-  const submitForm = handleSubmit(async (data) => {
-    reset();
-    // console.log('DATA', data)
-    login({ email: data.email , password: data.password, setErrors, setStatus })
+      // Clear previous error messages
+      setEmailError('');
+      setPasswordError('');
+
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+
+      console.log('User successfully connected!');
+
+      reset();
+
+      navigate("/");
+
+    } catch (error) {
+      console.error('Erreur de connexion :', error.message);
+
+      // Display error messages based on the type of error
+      if (error.code === 'auth/invalid-email') {
+        setEmailError('Adresse e-mail invalide');
+      } else if (error.code === 'auth/invalid-credential') {
+        setPasswordError('Mot de passe incorrect');
+      } else {
+        // Example: alert('Une erreur s\'est produite lors de la connexion');
+        // auth/too-many-requests]
+      }
+    }
   });
 
   const renderHead = (
@@ -78,8 +100,6 @@ export default function LoginBackgroundView() {
         >
           Get started
         </Link>
-        <Typography>{errors}</Typography>
-        <Typography>{status}</Typography>
       </Typography>
     </div>
   );
@@ -101,14 +121,20 @@ export default function LoginBackgroundView() {
   );
 
   const renderForm = (
-    <FormProvider methods={methods} onSubmit={submitForm}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={2.5} alignItems="flex-end">
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField
+          name="email"
+          label="Email address"
+          value={methods.watch('email')}
+        />
+        {emailError && (<Typography variant="body2" sx={{ color: 'error.main' }}>{emailError}</Typography>)}
 
         <RHFTextField
           name="password"
           label="Password"
           type={passwordShow.value ? 'text' : 'password'}
+          value={methods.watch('password')}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -119,6 +145,7 @@ export default function LoginBackgroundView() {
             ),
           }}
         />
+        {passwordError && (<Typography variant="body2" sx={{ color: 'error.main' }}>{passwordError}</Typography>)}
 
         <Link
           component={RouterLink}

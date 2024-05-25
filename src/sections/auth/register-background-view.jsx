@@ -1,7 +1,10 @@
+import axios from 'axios';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -15,31 +18,35 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { useAuth } from 'src/hooks/auth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
+import { auth } from "../../../firebase";
+
 // ----------------------------------------------------------------------
 
 export default function RegisterBackgroundView() {
   const passwordShow = useBoolean();
-  const [errors, setErrors] = useState([])
-  const [status, setStatus] = useState(null)
+  const navigate = useNavigate();
+
+  const confirmPasswordShow = useBoolean();
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const RegisterSchema = Yup.object().shape({
     fullName: Yup.string()
       .required('Full name is required')
       .min(6, 'Mininum 6 characters')
-      .max(20, 'Maximum 20 characters'),
+      .max(15, 'Maximum 15 characters'),
     email: Yup.string().required('Email is required').email('That is not an email'),
     password: Yup.string()
       .required('Password is required')
       .min(6, 'Password should be of minimum 6 characters length'),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
-      .oneOf([Yup.ref('password')], "Password's not match"),
+      .oneOf([Yup.ref('password')], "Passwords don't match"),
   });
 
   const defaultValues = {
@@ -60,22 +67,44 @@ export default function RegisterBackgroundView() {
     formState: { isSubmitting },
   } = methods;
 
-  const { register } = useAuth({
-    middleware: 'guest',
-    redirectIfAuthenticated: '/'
-  })
+  const apiUrl = import.meta.env.VITE_CUSTOMER_API_URL;
 
-  const submitForm = handleSubmit(async (data) => {
-    reset();
-    // console.log('DATA', data)
-    register({
-      name: data.fullName,
-      email: data.email,
-      password: data.password,
-      password_confirmation: data.password,
-      setErrors,
-      setStatus
-    })
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+
+      // Clear previous error messages
+      setEmailError('');
+      setPasswordError('');
+
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
+
+      if (auth.currentUser) {
+        await axios.post(apiUrl, {
+          uid: auth.currentUser.uid,
+          email: data.email,
+        });
+      }
+
+      console.log('User created successfully!');
+
+      reset();
+
+      navigate("/");
+
+    } catch (error) {
+      console.error('Erreur de connexion :', error.message);
+
+      // Display error messages based on the type of error
+      if (error.code === 'auth/invalid-email') {
+        setEmailError('Adresse e-mail invalide');
+      } else if (error.code === 'auth/email-already-in-use') {
+        setEmailError('Adresse e-mail déjà utilisée');
+      } else if (error.code === 'auth/invalid-credential') {
+        setPasswordError('Mot de passe incorrect');
+      } else if (error.code === 'auth/too-many-requests') {
+        setPasswordError('Trop de tentatives de connexion infructueuses. Réessayez plus tard');
+      }
+    }
   });
 
   const renderHead = (
@@ -94,8 +123,6 @@ export default function RegisterBackgroundView() {
         >
           Login
         </Link>
-        <Typography>{errors}</Typography>
-        <Typography>{status}</Typography>
       </Typography>
     </div>
   );
@@ -117,16 +144,22 @@ export default function RegisterBackgroundView() {
   );
 
   const renderForm = (
-    <FormProvider methods={methods} onSubmit={submitForm}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={2.5}>
         <RHFTextField name="fullName" label="Full Name" />
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField
+          name="email"
+          label="Email address"
+          value={methods.watch('email')}
+        />
+        {emailError && (<Typography variant="body2" sx={{ color: 'error.main' }}>{emailError}</Typography>)}
 
         <RHFTextField
           name="password"
           label="Password"
           type={passwordShow.value ? 'text' : 'password'}
+          value={methods.watch('password')}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -137,21 +170,24 @@ export default function RegisterBackgroundView() {
             ),
           }}
         />
+        {passwordError && (<Typography variant="body2" sx={{ color: 'error.main' }}>{passwordError}</Typography>)}
 
         <RHFTextField
           name="confirmPassword"
           label="Confirm Password"
-          type={passwordShow.value ? 'text' : 'password'}
+          type={confirmPasswordShow.value ? 'text' : 'password'}
+          value={methods.watch('confirmPassword')}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={passwordShow.onToggle} edge="end">
-                  <Iconify icon={passwordShow.value ? 'carbon:view' : 'carbon:view-off'} />
+                <IconButton onClick={confirmPasswordShow.onToggle} edge="end">
+                  <Iconify icon={confirmPasswordShow.value ? 'carbon:view' : 'carbon:view-off'} />
                 </IconButton>
               </InputAdornment>
             ),
           }}
         />
+        {passwordError && (<Typography variant="body2" sx={{ color: 'error.main' }}>{passwordError}</Typography>)}
 
         <LoadingButton
           fullWidth
