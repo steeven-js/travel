@@ -8,18 +8,18 @@ import { _tags } from './assets';
 // ----------------------------------------------------------------------
 
 export const TOUR_SERVICE_OPTIONS = [
-  { value: 'Audio guide', label: 'Audio guide' },
-  { value: 'Food and drinks', label: 'Food and drinks' },
-  { value: 'Lunch', label: 'Lunch' },
-  { value: 'Private tour', label: 'Private tour' },
-  { value: 'Special activities', label: 'Special activities' },
-  { value: 'Entrance fees', label: 'Entrance fees' },
-  { value: 'Gratuities', label: 'Gratuities' },
-  { value: 'Pick-up and drop off', label: 'Pick-up and drop off' },
-  { value: 'Professional guide', label: 'Professional guide' },
+  { value: 'Audio guide', label: 'Guide audio' },
+  { value: 'Food and drinks', label: 'Nourriture et boissons' },
+  { value: 'Lunch', label: 'Déjeuner' },
+  { value: 'Private tour', label: 'Visite privée' },
+  { value: 'Special activities', label: 'Activités spéciales' },
+  { value: 'Entrance fees', label: 'Frais d\'entrée' },
+  { value: 'Gratuities', label: 'Pourboires' },
+  { value: 'Pick-up and drop off', label: 'Prise en charge et dépôt' },
+  { value: 'Professional guide', label: 'Guide professionnel' },
   {
     value: 'Transport by air-conditioned',
-    label: 'Transport by air-conditioned',
+    label: 'Transport climatisé',
   },
 ];
 
@@ -43,13 +43,13 @@ export const _tours = [...Array(12)].map((_, index) => {
     text: _mock.description(itemIndex),
   }));
 
-  const services = (index % 2 && ['Audio guide', 'Food and drinks']) ||
-    (index % 3 && ['Lunch', 'Private tour']) ||
-    (index % 4 && ['Special activities', 'Entrance fees']) || [
-      'Gratuities',
-      'Pick-up and drop off',
-      'Professional guide',
-      'Transport by air-conditioned',
+  const services = (index % 2 && ['Guide audio', 'Nourriture et boissons']) ||
+    (index % 3 && ['Déjeuner', 'Visite privée']) ||
+    (index % 4 && ['Activités spéciales', 'Frais d\'entrée']) || [
+      'Pourboires',
+      'Prise en charge et dépôt',
+      'Guide professionnel',
+      'Transport climatisé',
     ];
 
   const tourGuide = {

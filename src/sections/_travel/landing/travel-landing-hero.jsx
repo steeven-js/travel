@@ -183,7 +183,7 @@ function CarouselItem({ tour }) {
         </Stack>
 
         <Button variant="contained" size="large" color="primary">
-          Book Now
+          Réserver maintenant
         </Button>
       </Stack>
 

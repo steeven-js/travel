@@ -60,10 +60,10 @@ export default function TravelLandingIntroduce() {
             textAlign: { xs: 'center', md: 'unset' },
           }}
         >
-          <Typography variant="h2">Explore A Different Way To Travel</Typography>
+          <Typography variant="h2">Explorez une autre façon de voyager</Typography>
 
           <Typography sx={{ color: 'text.secondary' }}>
-            Cras ultricies mi eu turpis hendrerit fringilla. Nulla consequat massa quis enim.
+            Découvrez de nouvelles perspectives et des expériences uniques. Laissez-vous inspirer par des destinations inattendues et des aventures inoubliables.
           </Typography>
         </Stack>
       </Container>
@@ -94,13 +94,12 @@ export default function TravelLandingIntroduce() {
           }}
         >
           <Typography variant="overline" sx={{ color: 'text.disabled' }}>
-            Device
+            Équipement
           </Typography>
 
           <Typography variant="h4" sx={{ my: 3 }}>
-            The More Important the Work
+            Plus le voyage est exceptionnel
           </Typography>
-
           <Stack
             direction="row"
             alignItems="center"
@@ -112,7 +111,7 @@ export default function TravelLandingIntroduce() {
               '&:hover': { opacity: 0.72 },
             }}
           >
-            <Iconify icon="carbon:play" width={24} sx={{ mr: 1 }} /> Watch Video
+            <Iconify icon="carbon:play" width={24} sx={{ mr: 1 }} /> Regarder la vidéo
           </Stack>
         </Card>
 
