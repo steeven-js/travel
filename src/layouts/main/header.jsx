@@ -1,27 +1,32 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import { signOut } from '@firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material/styles';
 
-import { useAuth } from 'src/hooks/auth';
+import { paths } from 'src/routes/paths';
+
+import { useAuth } from 'src/hooks/use-auth';
 import { useOffSetTop } from 'src/hooks/use-off-set-top';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { bgBlur } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
+import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { NavBasicDesktop } from 'src/components/nav-basic';
 
 import NavMobile from './nav/mobile';
+import { auth } from '../../../firebase';
 import { HEADER } from '../config-layout';
-import Searchbar from '../common/searchbar';
 import HeaderShadow from '../common/header-shadow';
 import SettingsButton from '../common/settings-button';
 
@@ -29,92 +34,55 @@ import SettingsButton from '../common/settings-button';
 
 export default function Header({ headerOnDark }) {
   const theme = useTheme();
+
   const offset = useOffSetTop();
+
   const mdUp = useResponsive('up', 'md');
-  const { logout, user } = useAuth();
 
-  const data = user
-    ? [
-        {
-          title: 'Home',
-          icon: <Iconify icon="solar:home-2-bold-duotone" />,
-          path: '/',
-        },
-      ]
-    : [
-        {
-          title: 'Home',
-          icon: <Iconify icon="solar:home-2-bold-duotone" />,
-          path: '/',
-        },
-        { title: 'Login', path: '/auth/login-background' },
-        { title: 'Register', path: '/auth/register-background' },
-      ];
+  const navigation = useNavigate();
 
-  const renderContent = (
-    <>
-      <Box sx={{ lineHeight: 0, position: 'relative' }}>
-        <Logo />
-      </Box>
+  // Logout function
+  const handleLogout = () => {
+    signOut(auth).then(() => {
+      navigation.navigate("/");
+      console.log("Déconnexion réussie");
+    }).catch((error) => {
+      console.error("Erreur de déconnexion:", error);
+    });
+  }
 
-      <>
-        <Stack
-          flexGrow={1}
-          alignItems="center"
-          sx={{
-            display: { xs: 'none', md: 'flex' },
-          }}
-        >
-          <NavBasicDesktop
-            slotProps={{
-              rootItem: {
-                '& .icon': { display: 'none' },
-              },
-            }}
-            data={data}
-          />
-        </Stack>
+  // Auth check
+  const { user, loading } = useAuth();
 
-        <Box sx={{ flexGrow: { xs: 1, md: 'unset' } }} />
-      </>
-
-      <Stack spacing={2} direction="row" alignItems="center" justifyContent="flex-end">
-        <Stack spacing={1} direction="row" alignItems="center">
-          <Searchbar />
-          <SettingsButton />
-        </Stack>
-
-        {user && (
-          <Button
-            variant="contained"
-            color="inherit"
-            onClick={logout}
-            target="_blank"
-            rel="noopener"
-            sx={{
-              display: { xs: 'none', md: 'inline-flex' },
-            }}
-          >
-            Logout
-          </Button>
-        )}
-      </Stack>
-
-      {!mdUp && (
-        <NavMobile
-          data={[
-            {
-              title: 'Home',
-              icon: <Iconify icon="solar:home-2-bold-duotone" />,
-              path: '/',
-            },
-            { title: 'Login', path: '/auth/login' },
-            { title: 'Register', path: '/auth/register-background' },
-            { title: 'Logout', path: '/logout' },
-          ]}
-        />
-      )}
-    </>
+  const navData = user ? (
+    [
+      {
+        title: 'Home',
+        icon: <Iconify icon="solar:home-2-bold-duotone" />,
+        path: '/',
+      },
+      { title: 'Account', path: '#' }, // Remplacer 'Logout' par votre chemin de déconnexion
+      {
+        title: 'Docs',
+        icon: <Iconify icon="solar:notebook-bold-duotone" />,
+        path: paths.docs,
+      },
+    ]
+  ) : (
+    [
+      {
+        title: 'Home',
+        icon: <Iconify icon="solar:home-2-bold-duotone" />,
+        path: '/',
+      },
+      { title: 'Login', path: paths.loginBackground },
+      { title: 'Register', path: paths.registerBackground },
+      {
+        title: 'Docs',
+        icon: <Iconify icon="solar:notebook-bold-duotone" />,
+        path: paths.docs,
+      },
+    ]
   );
 
   return (
@@ -150,7 +118,77 @@ export default function Header({ headerOnDark }) {
             justifyContent: 'center',
           }}
         >
-          {renderContent}
+          <Box sx={{ lineHeight: 0, position: 'relative' }}>
+            <Logo />
+
+            <Link href="https://zone-docs.vercel.app/changelog" target="_blank" rel="noopener">
+              <Label
+                color="info"
+                sx={{
+                  ml: 0.5,
+                  px: 0.5,
+                  top: -14,
+                  left: 60,
+                  height: 20,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  position: 'absolute',
+                }}
+              >
+                v1.0.0
+              </Label>
+            </Link>
+          </Box>
+
+          {mdUp && (
+            <Stack
+              flexGrow={1}
+              alignItems="center"
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+              }}
+            >
+              {!loading && (
+                <NavBasicDesktop
+                  slotProps={{
+                    rootItem: {
+                      '& .icon': { display: 'none' },
+                    },
+                  }}
+                  data={navData}
+                />
+              )}
+            </Stack>
+          )}
+
+          <Box sx={{ flexGrow: { xs: 1, md: 'unset' } }} />
+
+          <Stack spacing={2} direction="row" alignItems="center" justifyContent="flex-end">
+            <Stack spacing={1} direction="row" alignItems="center">
+              {/* <Searchbar /> */}
+
+              <SettingsButton />
+            </Stack>
+
+            <Button
+              variant="contained"
+              color="inherit"
+              onClick={handleLogout}
+              target="_blank"
+              rel="noopener"
+              sx={{
+                display: { xs: 'none', md: 'inline-flex' },
+              }}
+            >
+              Logout
+            </Button>
+          </Stack>
+
+          {!mdUp && !loading && (
+            <NavMobile
+              data={navData}
+            />
+          )}
         </Container>
       </Toolbar>
 
@@ -158,6 +196,7 @@ export default function Header({ headerOnDark }) {
     </AppBar>
   );
 }
+
 
 Header.propTypes = {
   headerOnDark: PropTypes.bool,

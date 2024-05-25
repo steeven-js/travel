@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -14,12 +16,15 @@ import { paths } from 'src/routes/paths';
 import { useActiveLink } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
+import { useAuth } from 'src/hooks/use-auth';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { _mock } from 'src/_mock';
 
 import Iconify from 'src/components/iconify';
 import TextMaxLine from 'src/components/text-max-line';
+
+import { auth } from '../../../firebase';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +60,20 @@ const navigations = [
 
 export default function Nav({ open, onClose }) {
   const mdUp = useResponsive('up', 'md');
+  const navigate = useNavigate();
+
+  // Auth info
+  const { user } = useAuth();
+
+  // Logout function
+  const handleLogout = () => {
+    signOut(auth).then(() => {
+      navigate("/");
+      console.log("Déconnexion réussie");
+    }).catch((error) => {
+      console.error("Erreur de déconnexion:", error);
+    });
+  }
 
   const renderContent = (
     <Stack
@@ -87,10 +106,10 @@ export default function Nav({ open, onClose }) {
 
         <Stack spacing={0.5}>
           <TextMaxLine variant="subtitle1" line={1}>
-            Jayvion Simon
+            {user && user.displayName ? user.displayName : 'Anonymous'}
           </TextMaxLine>
           <TextMaxLine variant="body2" line={1} sx={{ color: 'text.secondary' }}>
-            nannie_abernathy70@yahoo.com
+            {user && user.email ? user.email : 'Not set'}
           </TextMaxLine>
         </Stack>
       </Stack>
@@ -112,6 +131,7 @@ export default function Nav({ open, onClose }) {
             height: 44,
             borderRadius: 1,
           }}
+          onClick={handleLogout}
         >
           <ListItemIcon>
             <Iconify icon="carbon:logout" />

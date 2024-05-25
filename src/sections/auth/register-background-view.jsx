@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -67,8 +66,6 @@ export default function RegisterBackgroundView() {
     formState: { isSubmitting },
   } = methods;
 
-  const apiUrl = import.meta.env.VITE_CUSTOMER_API_URL;
-
   const onSubmit = handleSubmit(async (data) => {
     try {
 
@@ -77,13 +74,6 @@ export default function RegisterBackgroundView() {
       setPasswordError('');
 
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-
-      if (auth.currentUser) {
-        await axios.post(apiUrl, {
-          uid: auth.currentUser.uid,
-          email: data.email,
-        });
-      }
 
       console.log('User created successfully!');
 
