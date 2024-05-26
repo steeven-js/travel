@@ -170,18 +170,20 @@ export default function Header({ headerOnDark }) {
               <SettingsButton />
             </Stack>
 
-            <Button
-              variant="contained"
-              color="inherit"
-              onClick={handleLogout}
-              target="_blank"
-              rel="noopener"
-              sx={{
-                display: { xs: 'none', md: 'inline-flex' },
-              }}
-            >
-              Logout
-            </Button>
+            {auth.currentUser && (
+              <Button
+                variant="contained"
+                color="inherit"
+                onClick={handleLogout}
+                target="_blank"
+                rel="noopener"
+                sx={{
+                  display: { xs: 'none', md: 'inline-flex' },
+                }}
+              >
+                Logout
+              </Button>
+            )}
           </Stack>
 
           {!mdUp && !loading && (

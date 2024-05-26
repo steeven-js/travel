@@ -35,7 +35,7 @@ export default function TravelLandingPosts({ posts }) {
     <Box sx={{ bgcolor: 'grey.900' }}>
       {!mdUp && (
         <Typography variant="h2" sx={{ pt: 10, pb: 8, color: 'common.white', textAlign: 'center' }}>
-          Latest Posts
+          Derniers articles
         </Typography>
       )}
 
@@ -69,7 +69,7 @@ export default function TravelLandingPosts({ posts }) {
         >
           {mdUp && (
             <Typography variant="h2" sx={{ color: 'common.white', py: 10 }}>
-              Latest Posts
+              Derniers articles
             </Typography>
           )}
 

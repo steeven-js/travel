@@ -13,22 +13,22 @@ import CountUp from 'src/components/count-up';
 const SUMMARY = [
   {
     total: 130,
-    description: 'Air tickets sold',
+    description: 'Billets d\'avion vendus',
     icon: '/assets/icons/travel/ic_travel_tickets.svg',
   },
   {
     total: 196,
-    description: 'Tours booked',
+    description: 'Circuits réservés',
     icon: '/assets/icons/travel/ic_travel_booking.svg',
   },
   {
     total: 10670,
-    description: 'Site visitors',
+    description: 'Visiteurs du site',
     icon: '/assets/icons/travel/ic_travel_site_visitors.svg',
   },
   {
     total: 877,
-    description: 'Verified hotels',
+    description: 'Hôtels vérifiés',
     icon: '/assets/icons/travel/ic_travel_verified_hotels.svg',
   },
 ];
@@ -51,11 +51,10 @@ export default function TravelLandingSummary() {
           mb: { xs: 8, md: 10 },
         }}
       >
-        <Typography variant="h2">Fastest Way to Book over 450 Great Tours</Typography>
+        <Typography variant="h2">Réservez rapidement plus de 52 circuits incroyables</Typography>
 
         <Typography sx={{ color: 'text.secondary' }}>
-          Since wire-frame renderings are relatively simple and fast to calculate, they are often
-          used in cases
+          Profitez de notre plateforme facile et rapide pour découvrir les trésors des Caraïbes.
         </Typography>
       </Stack>
 

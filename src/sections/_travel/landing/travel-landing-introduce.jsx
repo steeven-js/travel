@@ -17,18 +17,18 @@ import SvgColor from 'src/components/svg-color';
 
 const SUMMARY = [
   {
-    title: 'Professional Tour Guides',
-    description: 'Nunc nonummy metus. Donec elit libero',
+    title: 'Guides touristiques professionnels',
+    description: 'Nos guides experts vous feront découvrir les trésors cachés des Caraïbes.',
     icon: '/assets/icons/ic_popularity.svg',
   },
   {
-    title: 'Customer Satisfaction',
-    description: 'Nunc nonummy metus. Donec elit libero',
+    title: 'Satisfaction du client',
+    description: 'Nous nous engageons à offrir une expérience inoubliable à chaque voyageur.',
     icon: '/assets/icons/ic_reputation.svg',
   },
   {
-    title: 'Secure Payment',
-    description: 'Nunc nonummy metus. Donec elit libero',
+    title: 'Paiement sécurisé',
+    description: 'Réservez vos voyages en toute confiance avec notre système de paiement sécurisé.',
     icon: '/assets/icons/ic_secure_payment.svg',
   },
 ];

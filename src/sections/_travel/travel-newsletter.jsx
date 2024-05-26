@@ -50,17 +50,17 @@ export default function TravelNewsletter() {
                 textAlign: { xs: 'center', md: 'left' },
               }}
             >
-              <Typography variant="h2">Newsletter</Typography>
+              <Typography variant="h2">Bulletin d&apos;information</Typography>
 
               <Typography>
-                Sign up now to receive hot special offers
-                <br /> and information about the best tours!
+                Inscrivez-vous dès maintenant pour recevoir des offres spéciales exclusives
+                <br /> et des informations sur les meilleurs circuits !
               </Typography>
 
               <TextField
                 fullWidth
                 hiddenLabel
-                placeholder="Enter your email"
+                placeholder="Votre adresse e-mail"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

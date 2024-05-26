@@ -16,12 +16,12 @@ import TextMaxLine from 'src/components/text-max-line';
 // ----------------------------------------------------------------------
 
 const ROWS = [
-  'First Class Flights',
-  '5 Star Accommodations',
-  'Inclusive Packages',
-  'Latest Model Vehicles',
-  'Handpicked Hotels',
-  'Accesibility managment',
+  'Vols en première classe',
+  'Hébergements 5 étoiles',
+  'Forfaits tout compris',
+  'Véhicules de dernière génération',
+  'Hôtels sélectionnés avec soin',
+  'Gestion de l\'accessibilité',
 ];
 
 // ----------------------------------------------------------------------
@@ -41,11 +41,10 @@ export default function TravelLandingFavoriteDestinations({ tours }) {
         justifyContent={{ md: 'space-between' }}
       >
         <Grid xs={12} md={4}>
-          <Typography variant="h2">Our Favorite Destinations</Typography>
+          <Typography variant="h2">Nos destinations préférées</Typography>
 
           <Typography sx={{ my: 3, color: 'text.secondary' }}>
-            Since wire-frame renderings are relatively simple and fast to calculate, they are often
-            used in cases
+            Explorez nos destinations favorites pour des vacances de rêve dans les Caraïbes. Découvrez des plages paradisiaques, des cultures vibrantes et des paysages époustouflants.
           </Typography>
 
           <Stack spacing={2}>
@@ -114,9 +113,8 @@ function DestinationItem({ tour, order }) {
         alt={location}
         src={coverUrl}
         ratio={(!mdUp && '1/1') || (order && '1/1') || '4/6'}
-        overlay={`linear-gradient(to bottom, ${alpha(theme.palette.common.black, 0)} 0%, ${
-          theme.palette.common.black
-        } 75%)`}
+        overlay={`linear-gradient(to bottom, ${alpha(theme.palette.common.black, 0)} 0%, ${theme.palette.common.black
+          } 75%)`}
       />
 
       <Stack

@@ -21,10 +21,10 @@ export default function TravelLandingTourFeatured({ tours }) {
       }}
     >
       <Stack spacing={3} sx={{ textAlign: 'center' }}>
-        <Typography variant="h3">Featured Tours</Typography>
+        <Typography variant="h3">Circuits à la une</Typography>
 
         <Typography sx={{ color: 'text.secondary' }}>
-          {`Our Featured Tours can help you find the trip that's perfect for you!`}
+          Nos circuits à la une peuvent vous aider à trouver le voyage parfait pour vous !
         </Typography>
       </Stack>
 
@@ -53,7 +53,7 @@ export default function TravelLandingTourFeatured({ tours }) {
           variant="outlined"
           color="inherit"
         >
-          View All Tours
+          Voir tous les circuits
         </Button>
       </Box>
     </Container>

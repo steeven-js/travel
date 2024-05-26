@@ -50,10 +50,10 @@ export default function TravelLandingToursByCity({ tours }) {
         }}
       >
         <Stack spacing={3}>
-          <Typography variant="h2">Tours By City</Typography>
+          <Typography variant="h2">Circuits par ville</Typography>
 
           <Typography sx={{ color: 'text.secondary' }}>
-            {`Our Featured Tours can help you find the trip that's perfect for you!`}
+            Nos circuits à la une peuvent vous aider à trouver le voyage parfait pour vous !
           </Typography>
         </Stack>
 
